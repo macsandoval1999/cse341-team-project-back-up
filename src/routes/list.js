@@ -1,10 +1,11 @@
-import Trip from "../models/schemas/trips.js";
+import { getDb } from "../db/connect.js";
 
 export default async (req, res) => {
+    const db = getDb();
     const [regions, trips, seasons] = await Promise.all([
-        Trip.distinct("region"),
-        Trip.find({}).sort({ id: 1 }).lean(),
-        Trip.distinct("bestSeason"),
+        db.collection("trips").distinct("region"),
+        db.collection("trips").find({}).toArray(),
+        db.collection("trips").distinct("bestSeason"),
     ]);
 
     res.render("trips/list", {
